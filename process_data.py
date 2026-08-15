@@ -24,8 +24,8 @@ INPUT_CSV = "dados_brutos.csv"
 OUTPUT_CSV = "dados_limpos.csv"
 OUTPUT_SUMMARY = "resumo.md"
 
-COL_CATEGORIA = "categoria"   # coluna usada para agrupar os dados
-COL_VALOR = "valor"           # coluna numerica que sera somada/media
+COL_CATEGORIA = "Category"    # coluna usada para agrupar os dados
+COL_VALOR = "Sales"           # coluna numerica que sera somada/media
 # ---------------------------------------------------------------------
 
 
@@ -33,7 +33,9 @@ def carregar_dados(caminho: str) -> pd.DataFrame:
     """Le o CSV bruto e para a execucao com uma mensagem clara se o arquivo nao existir."""
     if not Path(caminho).exists():
         sys.exit(f"Erro: arquivo '{caminho}' nao encontrado. Ajuste INPUT_CSV no topo do script.")
-    return pd.read_csv(caminho)
+    # encoding="ISO-8859-1" porque esse dataset (Superstore) tem alguns
+    # caracteres que nao sao UTF-8 valido (ex: nomes de produto com acento estranho)
+    return pd.read_csv(caminho, encoding="ISO-8859-1")
 
 
 def limpar_dados(df: pd.DataFrame) -> pd.DataFrame:

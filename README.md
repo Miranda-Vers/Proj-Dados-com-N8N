@@ -30,9 +30,11 @@ num banco SQL e versiona o relatório final no GitHub — tudo orquestrado pelo 
 5. Ative o workflow
 
 ## 🧠 Aprendizados
-<!-- Descreva aqui o que você aprendeu construindo: REST API, webhooks,
-     lógica condicional (IF/Switch), integração com banco de dados, versionamento
-     automático via API do GitHub, etc. -->
+Como orquestrar automações no n8n usando triggers, nodes e sub-workflows chamados como ferramentas por um agente de IA.
+- Integração com APIs REST reais (Telegram e GitHub) dentro de um fluxo automatizado, incluindo autenticação por token.
+- Limpeza e agregação de dados com Python e pandas, incluindo tratamento de encoding e valores inválidos num dataset real.
+- Armazenamento de dados processados em banco SQL (SQLite) e versionamento automático de relatórios via API do GitHub.
+- Diagnóstico de problemas reais de infraestrutura (rede, firewall, dependências) — a parte que mais ensina, porque não tem tutorial que cobre exatamente o seu erro.
 
 ## 📎 Próximos passos
 - [ ] Adicionar tratamento de erros no workflow

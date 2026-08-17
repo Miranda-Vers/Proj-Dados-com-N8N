@@ -61,10 +61,10 @@ Diferente de versões anteriores deste projeto, os dois workflows **não rodam m
                                                 (resposta no Telegram)
 ```
 ##Telegram e IA
-<img width="1456" height="814" alt="image" src="https://github.com/user-attachments/assets/8d764d31-d52a-4589-a064-910d938d2a8f" />
+<img width="1668" height="896" alt="image" src="https://github.com/user-attachments/assets/d3f75324-7711-4b75-80a3-bd2648f09f04" />
 
 ## Execute Command
-<img width="1456" height="812" alt="image" src="https://github.com/user-attachments/assets/f6e6f299-654c-4205-a182-5c69b948487a" />
+<img width="1673" height="879" alt="image" src="https://github.com/user-attachments/assets/5cb35f35-a6d6-4636-bee9-8a47ea7f50b1" />
 
 **Fluxo real de uso:**
 

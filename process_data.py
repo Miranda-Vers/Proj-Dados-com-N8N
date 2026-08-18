@@ -16,10 +16,7 @@ COMO ADAPTAR:
    E essa linha que o n8n deve parsear no Code node.
 ------------------------------------------------------------
 """
-import json
 import sys
-import uuid
-from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd

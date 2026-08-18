@@ -11,10 +11,15 @@ COMO ADAPTAR:
 3. O script gera dois arquivos de saida:
    - dados_limpos.csv  -> pronto para o node Postgres inserir no banco
    - resumo.md         -> pronto para o node do GitHub commitar
+4. Ao final, imprime uma unica linha de JSON no stdout com o
+   resultado da execucao (success, contagens, execution_id).
+   E essa linha que o n8n deve parsear no Code node.
 ------------------------------------------------------------
 """
-
+import json
 import sys
+import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -33,8 +38,6 @@ def carregar_dados(caminho: str) -> pd.DataFrame:
     """Le o CSV bruto e para a execucao com uma mensagem clara se o arquivo nao existir."""
     if not Path(caminho).exists():
         sys.exit(f"Erro: arquivo '{caminho}' nao encontrado. Ajuste INPUT_CSV no topo do script.")
-    # encoding="ISO-8859-1" porque esse dataset (Superstore) tem alguns
-    # caracteres que nao sao UTF-8 valido (ex: nomes de produto com acento estranho)
     return pd.read_csv(caminho, encoding="ISO-8859-1")
 
 
@@ -49,7 +52,9 @@ def limpar_dados(df: pd.DataFrame) -> pd.DataFrame:
     df = df.dropna(subset=[COL_VALOR])
 
     depois = len(df)
-    print(f"Linhas antes da limpeza: {antes} | depois: {depois}")
+    # debug para quem roda manualmente no terminal - nao interfere no JSON final,
+    # que sempre sai por ultimo, na ultima linha do stdout
+    print(f"[debug] Linhas antes da limpeza: {antes} | depois: {depois}", file=sys.stderr)
     return df
 
 
@@ -71,14 +76,44 @@ def salvar_resumo_markdown(resumo: pd.DataFrame, caminho: str) -> None:
 
 
 def main() -> None:
-    df = carregar_dados(INPUT_CSV)
-    df_limpo = limpar_dados(df)
-    df_limpo.to_csv(OUTPUT_CSV, index=False)
+    execution_id = str(uuid.uuid4())
+    started_at = datetime.now(timezone.utc).isoformat()
 
-    resumo = gerar_resumo(df_limpo)
-    salvar_resumo_markdown(resumo, OUTPUT_SUMMARY)
+    try:
+        df = carregar_dados(INPUT_CSV)
+        antes = len(df)
 
-    print(f"Arquivos gerados: {OUTPUT_CSV}, {OUTPUT_SUMMARY}")
+        df_limpo = limpar_dados(df)
+        depois = len(df_limpo)
+
+        df_limpo.to_csv(OUTPUT_CSV, index=False)
+
+        resumo = gerar_resumo(df_limpo)
+        salvar_resumo_markdown(resumo, OUTPUT_SUMMARY)
+
+        top = resumo.iloc[0]
+
+        resultado = {
+            "success": True,
+            "execution_id": execution_id,
+            "started_at": started_at,
+            "rows_input": antes,
+            "rows_output": depois,
+            "rows_rejected": antes - depois,
+            "top_category": str(top[COL_CATEGORIA]),
+            "top_category_total": float(top["total"]),
+        }
+    except Exception as e:
+        resultado = {
+            "success": False,
+            "execution_id": execution_id,
+            "started_at": started_at,
+            "error_type": type(e).__name__,
+            "message": str(e),
+        }
+
+    # linha unica de JSON no stdout - e isso que o n8n vai capturar
+    print(json.dumps(resultado, ensure_ascii=False))
 
 
 if __name__ == "__main__":
